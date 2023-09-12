@@ -58,7 +58,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     let newreview = req.query.review;
     let isUpdated = 0;
 
-    return res.status(200).json(booktoedit);
+    return res.status(200).json(user);
     // if(booktoedit.review!=null){
     //     booktoedit.review.forEach(br => {
     //         if(br.username == user){
