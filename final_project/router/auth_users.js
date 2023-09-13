@@ -40,7 +40,7 @@ regd_users.post("/login", (req,res) => {
     if (authenticatedUser(username,password)) {
       let accessToken = jwt.sign({
         data: password
-      }, 'accessbook', { expiresIn: 60 * 60 * 60 });
+      }, 'access', { expiresIn: 60 * 60 * 60 });
   
       req.session.authorization = {
         accessToken,username
@@ -54,11 +54,27 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
     let booktoedit = books[req.params.isbn];
-    let user = req.session.username;
+    let user = req.session.authorization['username'];
     let newreview = req.query.review;
-    let isUpdated = 0;
+    // let isUpdated = 0;
 
-    return res.status(200).json(user);
+    let objtoadd = {
+        "user": user,
+        "review": newreview
+    };
+    if(booktoedit){
+        booktoedit.reviews.push(objtoadd); 
+        //books = books.filter(o => o.isbn != req.params.isbn);
+        books[req.params.isbn] = booktoedit;
+    }else{
+        return res.status(200).send("Enter valid isbn");
+    }
+
+    // books[req.params.isbn].review = (books[req.params.isbn].review ? books[req.params.isbn].review.filter( o => o.user != user) : {});
+    // books = JSON.parse(books);
+    // books[req.params.isbn].review.add(objtoadd);
+    // books = JSON.stringify(books);
+    return res.status(200).json(books);
     // if(booktoedit.review!=null){
     //     booktoedit.review.forEach(br => {
     //         if(br.username == user){
