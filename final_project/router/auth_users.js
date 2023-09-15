@@ -56,41 +56,23 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     let booktoedit = books[req.params.isbn];
     let user = req.session.authorization['username'];
     let newreview = req.query.review;
-    // let isUpdated = 0;
-
-    let objtoadd = {
-        "user": user,
-        "review": newreview
-    };
+   
     if(booktoedit){
-        booktoedit.reviews.push(objtoadd); 
-        //books = books.filter(o => o.isbn != req.params.isbn);
-        books[req.params.isbn] = booktoedit;
+        books[req.params.isbn].reviews[user] = newreview;
+        return res.status(200).send("Review added");
     }else{
         return res.status(200).send("Enter valid isbn");
     }
-
-    // books[req.params.isbn].review = (books[req.params.isbn].review ? books[req.params.isbn].review.filter( o => o.user != user) : {});
-    // books = JSON.parse(books);
-    // books[req.params.isbn].review.add(objtoadd);
-    // books = JSON.stringify(books);
-    return res.status(200).json(books);
-    // if(booktoedit.review!=null){
-    //     booktoedit.review.forEach(br => {
-    //         if(br.username == user){
-    //             br.reviewtxt = newreview;
-    //             isUpdated = 1;
-    //             return res.status(200).send("Review updated");
-    //         }
-    //     });
-    //     if(isUpdated == 0){
-    //         booktoedit.review.push({"username":user , "reviewtxt":newreview});
-    //         return res.status(200).send("Review updated");
-    //     }
-    // } else {
-    //     booktoedit.review.push({"username":user , "reviewtxt":newreview});
-    //     return res.status(200).send("Review updated");
-    // }
+});
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    let booktodeleterev = books[req.params.isbn];
+    let user = req.session.authorization['username'];
+    if(booktodeleterev){
+        delete books[req.params.isbn].reviews[user];
+        return res.status(200).send("Deleted successfully...");
+    } else {
+        return res.status(200).send("Enter valid isbn");
+    }
 });
 
 module.exports.authenticated = regd_users;
